@@ -1,0 +1,154 @@
+name: Publish Extension
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+      - package-lock.json
+      - CHANGELOG.md
+      - README.md
+      - .vscodeignore
+      - "src/**"
+      - "images/**"
+      - "scripts/**"
+      - .github/workflows/publish.yml
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-queryforge-editor
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Validate, publish and release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release version
+        run: node scripts/validate-release-version.mjs "${{ steps.version.outputs.tag }}"
+
+      - name: Check tag
+        id: tag
+        shell: bash
+        run: |
+          git fetch --tags --force
+
+          if git rev-parse "refs/tags/${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stop when release already exists
+        if: steps.tag.outputs.exists == 'true'
+        run: |
+          echo "Release ${{ steps.version.outputs.tag }} already exists. Nothing to publish."
+
+      - name: Install dependencies
+        if: steps.tag.outputs.exists == 'false'
+        run: npm ci
+
+      - name: Typecheck
+        if: steps.tag.outputs.exists == 'false'
+        run: npm run typecheck
+
+      - name: Test
+        if: steps.tag.outputs.exists == 'false'
+        run: npm test
+
+      - name: Compile bundle
+        if: steps.tag.outputs.exists == 'false'
+        run: npm run compile
+
+      - name: List package files
+        if: steps.tag.outputs.exists == 'false'
+        run: npm run list
+
+      - name: Package VSIX
+        if: steps.tag.outputs.exists == 'false'
+        id: package
+        shell: bash
+        run: |
+          npx vsce package
+          VSIX_FILE="$(ls -1 queryforge-editor-${{ steps.version.outputs.version }}.vsix)"
+          echo "file=$VSIX_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Validate VSIX
+        if: steps.tag.outputs.exists == 'false'
+        run: node scripts/validate-package.mjs "${{ steps.package.outputs.file }}"
+
+      - name: Extract release notes
+        if: steps.tag.outputs.exists == 'false'
+        run: node scripts/extract-changelog.mjs "${{ steps.version.outputs.tag }}" --output release-notes.md
+
+      - name: Validate marketplace tokens
+        if: steps.tag.outputs.exists == 'false'
+        shell: bash
+        run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "VSCE_PAT secret is not configured."
+            exit 1
+          fi
+
+          if [ -z "$OVSX_PAT" ]; then
+            echo "OVSX_PAT secret is not configured."
+            exit 1
+          fi
+
+      - name: Publish to Visual Studio Marketplace
+        if: steps.tag.outputs.exists == 'false'
+        run: npx vsce publish --packagePath "${{ steps.package.outputs.file }}" --pat "$VSCE_PAT"
+
+      - name: Publish to Open VSX
+        if: steps.tag.outputs.exists == 'false'
+        run: npx ovsx publish "${{ steps.package.outputs.file }}" --pat "$OVSX_PAT"
+
+      - name: Create git tag
+        if: steps.tag.outputs.exists == 'false'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.tag }}" \
+            -m "QueryForge Editor ${{ steps.version.outputs.tag }}" \
+            "${{ github.sha }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Create GitHub Release
+        if: steps.tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: QueryForge Editor ${{ steps.version.outputs.tag }}
+          body_path: release-notes.md
+          files: ${{ steps.package.outputs.file }}

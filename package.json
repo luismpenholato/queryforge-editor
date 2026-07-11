@@ -1,0 +1,168 @@
+{
+  "name": "queryforge-editor",
+  "displayName": "QueryForge — EF & LINQ Analyzer",
+  "description": "Local-first query diagnostics and safe fixes for .NET LINQ and Entity Framework.",
+  "version": "0.1.0",
+  "publisher": "nebula-themes",
+  "license": "MIT",
+  "pricing": "Free",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Linters",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "dotnet",
+    "csharp",
+    "linq",
+    "entity-framework",
+    "ef-core",
+    "ef6",
+    "dapper",
+    "query",
+    "query-performance",
+    "performance",
+    "analyzer",
+    "diagnostics",
+    "vscode",
+    "cursor",
+    "antigravity"
+  ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#171320",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luismpenholato/queryforge-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/luismpenholato/queryforge-editor/issues"
+  },
+  "homepage": "https://github.com/luismpenholato/queryforge-editor#readme",
+  "sponsor": {
+    "url": "https://github.com/sponsors/luismpenholato"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:csharp",
+    "onCommand:queryforge.analyzeCurrentFile",
+    "onCommand:queryforge.analyzeSelection",
+    "onCommand:queryforge.clearDiagnostics",
+    "onCommand:queryforge.showOutput",
+    "onCommand:queryforge.supportProject"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "queryforge.analyzeCurrentFile",
+        "title": "QueryForge: Analyze Current File",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.analyzeSelection",
+        "title": "QueryForge: Analyze Current Selection",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.clearDiagnostics",
+        "title": "QueryForge: Clear Diagnostics",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.showOutput",
+        "title": "QueryForge: Show Output",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.supportProject",
+        "title": "QueryForge: Support the Project",
+        "category": "QueryForge"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "queryforge.analyzeCurrentFile",
+          "when": "editorLangId == csharp",
+          "group": "queryforge@1"
+        },
+        {
+          "command": "queryforge.analyzeSelection",
+          "when": "editorLangId == csharp && editorHasSelection",
+          "group": "queryforge@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "QueryForge",
+      "properties": {
+        "queryforge.analysis.provider": {
+          "type": "string",
+          "enum": [
+            "ef-core",
+            "ef6",
+            "linq",
+            "dapper",
+            "unknown"
+          ],
+          "default": "ef-core",
+          "description": "Query provider context supplied to the QueryForge analyzer."
+        },
+        "queryforge.analysis.maxIssues": {
+          "type": "number",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of diagnostics returned per analysis."
+        },
+        "queryforge.diagnostics.minimumSeverity": {
+          "type": "string",
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "default": "info",
+          "description": "Minimum severity level for diagnostics shown in the editor."
+        },
+        "queryforge.output.showOnError": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the QueryForge output channel when an analysis error occurs."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "npm run typecheck && npm test && npm run compile",
+    "list": "vsce ls",
+    "package": "vsce package",
+    "validate:package": "node scripts/validate-package.mjs",
+    "validate": "npm run build && npm run list && npm run package && npm run validate:package",
+    "publish:vsce": "npm run build && vsce publish",
+    "publish:ovsx": "npm run build && ovsx publish"
+  },
+  "dependencies": {
+    "@luispenholato/queryforge-mcp": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.25.5",
+    "ovsx": "^1.0.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

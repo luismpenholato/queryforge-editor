@@ -1,0 +1,14 @@
+.github/**
+.vscode/**
+src/**
+tests/**
+coverage/**
+node_modules/**
+scripts/**
+*.map
+tsconfig.json
+vitest.config.ts
+esbuild.mjs
+*.vsix
+.env
+.env.*

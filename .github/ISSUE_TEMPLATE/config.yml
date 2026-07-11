@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security advisory
+    url: https://github.com/luismpenholato/queryforge-editor/security/advisories/new
+    about: Report a security vulnerability privately.
+  - name: Support the project
+    url: https://github.com/sponsors/luismpenholato
+    about: Sponsor ongoing development of QueryForge.

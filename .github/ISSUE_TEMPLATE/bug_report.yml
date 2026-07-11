@@ -1,0 +1,91 @@
+name: Bug report
+description: Report reproducible incorrect behavior in QueryForge Editor
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I am not including proprietary, confidential or customer code.
+          required: true
+        - label: I understand that QueryForge uses heuristic analysis and does not replace execution-plan validation.
+          required: true
+    validations:
+      required: true
+
+  - type: dropdown
+    id: editor
+    attributes:
+      label: Editor
+      options:
+        - Visual Studio Code
+        - Cursor
+        - Antigravity
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: The QueryForge Editor version from the Extensions panel.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include operating system, editor version, .NET/EF version and provider setting when relevant.
+      placeholder: |
+        OS:
+        Editor:
+        .NET/EF:
+        Provider setting:
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Explain the incorrect behavior clearly and concisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide a minimal fictional C# example. Do not include proprietary code, credentials or connection strings.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Optional screenshots, command used or output channel excerpts.
+    validations:
+      required: false
