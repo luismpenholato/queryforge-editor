@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-07-12
+
+### Added
+
+- Added marketplace badges for Visual Studio Marketplace and Open VSX.
+- Added install instructions for marketplace, Extensions view, Command Palette and VSIX.
+
+### Changed
+
+- Aligned the publish workflow with the Nebula Aura Theme release flow: tag, marketplace publish and GitHub Release.
+
 ## [0.1.0] - 2026-07-11
 
 ### Added
@@ -39,4 +50,5 @@ All notable changes to this project will be documented in this file.
 - Fixed cross-platform VSIX validation by reading the package as a ZIP archive.
 - Validated the packaged extension manifest instead of only the local package metadata.
 
+[0.1.1]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.1
 [0.1.0]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.0

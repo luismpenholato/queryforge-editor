@@ -1,14 +1,44 @@
 # QueryForge — EF & LINQ Analyzer
 
-[![CI](https://github.com/luismpenholato/queryforge-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/luismpenholato/queryforge-editor/actions/workflows/ci.yml)
-[![GitHub release](https://img.shields.io/github/v/release/luismpenholato/queryforge-editor)](https://github.com/luismpenholato/queryforge-editor/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js 20](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/luismpenholato)
+[![VS Marketplace Version](https://vsmarketplacebadges.dev/version/queryforge-tools.queryforge-editor.svg?label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=queryforge-tools.queryforge-editor)
+[![VS Marketplace Installs](https://vsmarketplacebadges.dev/installs/queryforge-tools.queryforge-editor.svg?label=Installs)](https://marketplace.visualstudio.com/items?itemName=queryforge-tools.queryforge-editor)
+[![Open VSX Version](https://img.shields.io/open-vsx/v/queryforge-tools/queryforge-editor?label=Open%20VSX)](https://open-vsx.org/extension/queryforge-tools/queryforge-editor)
+[![Open VSX Downloads](https://img.shields.io/open-vsx/dt/queryforge-tools/queryforge-editor?label=Downloads)](https://open-vsx.org/extension/queryforge-tools/queryforge-editor)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/luismpenholato?label=Sponsor&logo=githubsponsors&logoColor=white&color=ea4aaa)](https://github.com/sponsors/luismpenholato)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 QueryForge detects risky LINQ and Entity Framework query patterns directly in your editor. Analysis runs locally and provides diagnostics, detailed guidance and safe quick fixes.
 
 Built for VS Code and editors compatible with the VS Code extension ecosystem.
+
+## Install
+
+[Install from Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=queryforge-tools.queryforge-editor) ·
+[Install from Open VSX](https://open-vsx.org/extension/queryforge-tools/queryforge-editor)
+
+Or open the Extensions view (`Ctrl+Shift+X`), search for **QueryForge**, and install `queryforge-tools.queryforge-editor`.
+
+You can also install from the Command Palette (`Ctrl+Shift+P`):
+
+```text
+ext install queryforge-tools.queryforge-editor
+```
+
+### Install from VSIX
+
+Download the `.vsix` from [GitHub Releases](https://github.com/luismpenholato/queryforge-editor/releases).
+
+1. Open your editor.
+2. Go to **Extensions**.
+3. Open the actions menu (`...`).
+4. Select **Install from VSIX...**
+5. Choose the downloaded file.
+
+```bash
+code --install-extension queryforge-editor-<version>.vsix
+cursor --install-extension queryforge-editor-<version>.vsix
+antigravity --install-extension queryforge-editor-<version>.vsix
+```
 
 ## Try it in 30 seconds
 
@@ -201,10 +231,18 @@ Extension ID:
 
 ## Support the project
 
-If QueryForge Editor helps your daily work, consider supporting ongoing development:
+QueryForge Editor is free and open source.
 
-[GitHub Sponsors](https://github.com/sponsors/luismpenholato)
+If the extension helps your daily work, consider supporting its continued maintenance through [GitHub Sponsors](https://github.com/sponsors/luismpenholato).
+
+Your support helps fund:
+
+- analyzer and editor improvements;
+- editor compatibility updates;
+- documentation;
+- issue resolution;
+- ongoing open-source maintenance.
 
 ## License
 
-MIT © Luis Mauro Penholato
+Licensed under the [MIT License](LICENSE).
