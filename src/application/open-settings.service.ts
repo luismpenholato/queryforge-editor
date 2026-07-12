@@ -1,4 +1,6 @@
-export const SETTINGS_EXTENSION_FILTER = '@ext:nebula-themes.queryforge-editor';
+import { QUERYFORGE_EXTENSION_ID } from '../identity/extension-identity.js';
+
+export const SETTINGS_EXTENSION_FILTER = `@ext:${QUERYFORGE_EXTENSION_ID}`;
 export const OPEN_SETTINGS_COMMAND = 'workbench.action.openSettings';
 
 export interface OpenSettingsDependencies {

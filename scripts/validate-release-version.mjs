@@ -26,8 +26,8 @@ if (packageJson.name !== 'queryforge-editor') {
   process.exit(1);
 }
 
-if (packageJson.publisher !== 'nebula-themes') {
-  console.error(`package.json publisher ${packageJson.publisher} is not nebula-themes.`);
+if (packageJson.publisher !== 'queryforge') {
+  console.error(`package.json publisher ${packageJson.publisher} is not queryforge.`);
   process.exit(1);
 }
 

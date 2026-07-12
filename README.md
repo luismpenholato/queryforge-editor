@@ -189,6 +189,10 @@ npm run validate
 
 Press `F5` in VS Code/Cursor to launch the Extension Development Host.
 
+Extension ID:
+
+`queryforge.queryforge-editor`
+
 ## Community
 
 - [Report a bug](https://github.com/luismpenholato/queryforge-editor/issues/new?template=bug_report.yml)

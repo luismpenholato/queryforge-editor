@@ -3,10 +3,9 @@
   "displayName": "QueryForge — EF & LINQ Analyzer",
   "description": "Detect risky LINQ and Entity Framework query patterns locally with editor diagnostics, detailed guidance and safe quick fixes.",
   "version": "0.1.0",
-  "publisher": "nebula-themes",
+  "publisher": "queryforge",
   "license": "MIT",
   "pricing": "Free",
-  "preview": true,
   "engines": {
     "vscode": "^1.96.0"
   },

@@ -60,4 +60,14 @@ describe('package manifest', () => {
     expect(runOnSave.type).toBe('boolean');
     expect(runOnSave.default).toBe(false);
   });
+
+  it('uses the permanent queryforge publisher', () => {
+    expect(packageJson.publisher).toBe('queryforge');
+    expect(packageJson.name).toBe('queryforge-editor');
+    expect(`${packageJson.publisher}.${packageJson.name}`).toBe('queryforge.queryforge-editor');
+  });
+
+  it('does not declare a preview marketplace label', () => {
+    expect(packageJson.preview).toBeUndefined();
+  });
 });

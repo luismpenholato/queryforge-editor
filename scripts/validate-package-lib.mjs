@@ -139,8 +139,8 @@ export function parsePackagedPackageJson(zip) {
 }
 
 export function validatePackagedManifest(packaged, expected) {
-  if (packaged.name !== 'queryforge-editor') {
-    throw new ValidationError(`Packaged name ${packaged.name} is not queryforge-editor.`);
+  if (packaged.name !== expected.name) {
+    throw new ValidationError(`Packaged name ${packaged.name} is not ${expected.name}.`);
   }
 
   if (packaged.version !== expected.version) {
@@ -149,12 +149,16 @@ export function validatePackagedManifest(packaged, expected) {
     );
   }
 
-  if (packaged.publisher !== 'nebula-themes') {
-    throw new ValidationError(`Packaged publisher ${packaged.publisher} is not nebula-themes.`);
+  if (packaged.publisher !== expected.publisher) {
+    throw new ValidationError(`Packaged publisher ${packaged.publisher} is not ${expected.publisher}.`);
   }
 
-  if (packaged.main !== './dist/extension.js') {
+  if (packaged.main !== expected.main) {
     throw new ValidationError(`Packaged main ${packaged.main} is invalid.`);
+  }
+
+  if (packaged.preview !== undefined) {
+    throw new ValidationError('Packaged preview property must not be present.');
   }
 
   if (!packaged.displayName) {

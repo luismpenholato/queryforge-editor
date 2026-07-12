@@ -30,6 +30,9 @@ All notable changes to this project will be documented in this file.
 - Optimized the extension icon for Marketplace distribution.
 - Expanded documentation with usage examples and a quick-start workflow.
 - Improved VSIX bundle validation markers.
+- Set the permanent Marketplace and Open VSX publisher to `queryforge`.
+- Finalized the extension identifier as `queryforge.queryforge-editor`.
+- Removed the preview Marketplace label for the initial public release.
 
 ### Fixed
 
