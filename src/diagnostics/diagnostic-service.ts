@@ -21,7 +21,7 @@ import {
 export interface PublishableEditorDocument {
   readonly uri: vscode.Uri;
   readonly version: number;
-  getText(): string;
+  getText(range?: { readonly start: vscode.Position; readonly end: vscode.Position }): string;
   offsetAt(position: vscode.Position): number;
   positionAt(offset: number): vscode.Position;
 }
@@ -51,6 +51,11 @@ export class DiagnosticService {
   clearByUri(uri: vscode.Uri): void {
     this.collection.delete(uri);
     this.metadataStore.clearByUri(uri.toString());
+  }
+
+  hasForUri(uri: vscode.Uri): boolean {
+    const uriString = uri.toString();
+    return this.metadataStore.hasForUri(uriString) || this.collection.has(uri);
   }
 
   publish(options: PublishDiagnosticsOptions): number {

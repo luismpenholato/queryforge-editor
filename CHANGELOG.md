@@ -15,4 +15,10 @@ All notable changes to this project will be documented in this file.
 - Added support links and local-first privacy documentation.
 - Added CI, VSIX packaging and marketplace publishing workflows.
 
+### Changed
+
+- Improved per-document status bar state.
+- Clear stale diagnostics when analyzed documents change or close.
+- Added clearer feedback when analysis is requested without an active C# file.
+
 [0.1.0]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.0

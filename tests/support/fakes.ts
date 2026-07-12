@@ -21,7 +21,6 @@ export function createFakeDocument(
     uri: vscodeUri,
     languageId: 'csharp',
     version,
-    getText: () => text,
     offsetAt(position: TextPosition | vscode.Position): number {
       const lineStart = lineStarts[position.line] ?? 0;
       return Math.min(text.length, lineStart + position.character);
@@ -36,6 +35,17 @@ export function createFakeDocument(
       }
 
       return { line: 0, character: clamped } as vscode.Position;
+    },
+    getText(range?: { start: TextPosition | vscode.Position; end: TextPosition | vscode.Position }): string {
+      if (!range) {
+        return text;
+      }
+
+      const start = lineStarts[range.start.line] ?? 0;
+      const endOffset = lineStarts[range.end.line] ?? 0;
+      const startOffset = Math.min(text.length, start + range.start.character);
+      const end = Math.min(text.length, endOffset + range.end.character);
+      return text.slice(startOffset, end);
     },
   };
 }

@@ -59,6 +59,18 @@ export class DiagnosticMetadataStore {
     return results;
   }
 
+  hasForUri(documentUri: string): boolean {
+    const prefix = `${documentUri}|`;
+
+    for (const key of this.entries.keys()) {
+      if (key.startsWith(prefix)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   clearByUri(documentUri: string): void {
     const prefix = `${documentUri}|`;
 

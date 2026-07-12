@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { QueryAnalysisResult } from '@luispenholato/queryforge-mcp';
 import { AnalysisCoordinator } from '../../src/application/analysis-coordinator.js';
 import {
+  NON_CSHARP_FILE_MESSAGE,
+  NO_ACTIVE_EDITOR_MESSAGE,
   analyzeCurrentDocument,
   resolveAnalysisFilePath,
   type PublishableDocument,
@@ -19,6 +21,22 @@ function createAnalysisResult(smells: QueryAnalysisResult['smells']): QueryAnaly
   };
 }
 
+function createDeps(overrides: Partial<Parameters<typeof analyzeCurrentDocument>[0]> = {}) {
+  return {
+    getActiveEditor: () => undefined,
+    analysisService: { analyze: vi.fn() },
+    coordinator: new AnalysisCoordinator(),
+    diagnosticService: { publish: vi.fn() },
+    configuration: new QueryForgeConfiguration(createConfigurationReader({})),
+    output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
+    statusBar: { setIssueCount: vi.fn() },
+    workspace: { asRelativePath: () => 'Example.cs' },
+    showOnError: true,
+    showInformationMessage: vi.fn(),
+    ...overrides,
+  };
+}
+
 describe('analyze-document.service', () => {
   it('resolves relative workspace path', () => {
     const path = resolveAnalysisFilePath(
@@ -31,67 +49,63 @@ describe('analyze-document.service', () => {
     expect(path).toBe('src/ProductService.cs');
   });
 
-  it('does nothing without editor', async () => {
+  it('shows feedback when there is no active editor', async () => {
+    const showInformationMessage = vi.fn();
     const publish = vi.fn();
-    await analyzeCurrentDocument({
-      getActiveEditor: () => undefined,
-      analysisService: { analyze: vi.fn() },
-      coordinator: new AnalysisCoordinator(),
-      diagnosticService: { publish },
-      configuration: new QueryForgeConfiguration(createConfigurationReader({})),
-      output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-      statusBar: { setIssueCount: vi.fn() },
-      workspace: { asRelativePath: () => 'Example.cs' },
-      showOnError: true,
-    });
 
+    await analyzeCurrentDocument(
+      createDeps({
+        showInformationMessage,
+        diagnosticService: { publish },
+      }),
+    );
+
+    expect(showInformationMessage).toHaveBeenCalledWith(NO_ACTIVE_EDITOR_MESSAGE);
     expect(publish).not.toHaveBeenCalled();
   });
 
-  it('analyzes only csharp files', async () => {
+  it('shows feedback for non-csharp files', async () => {
     const analyze = vi.fn();
+    const showInformationMessage = vi.fn();
     const base = createFakeDocument('text', 'file:///a.ts');
     const document = { ...base, languageId: 'typescript' } as PublishableDocument;
 
-    await analyzeCurrentDocument({
-      getActiveEditor: () => ({ document }),
-      analysisService: { analyze },
-      coordinator: new AnalysisCoordinator(),
-      diagnosticService: { publish: vi.fn() },
-      configuration: new QueryForgeConfiguration(createConfigurationReader({})),
-      output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-      statusBar: { setIssueCount: vi.fn() },
-      workspace: { asRelativePath: () => 'a.ts' },
-      showOnError: true,
-    });
+    await analyzeCurrentDocument(
+      createDeps({
+        getActiveEditor: () => ({ document }),
+        analysisService: { analyze },
+        showInformationMessage,
+      }),
+    );
 
+    expect(showInformationMessage).toHaveBeenCalledWith(NON_CSHARP_FILE_MESSAGE);
     expect(analyze).not.toHaveBeenCalled();
   });
 
   it('passes maxIssues and relative path to core', async () => {
     const analyze = vi.fn().mockReturnValue(createAnalysisResult([]));
     const publish = vi.fn().mockReturnValue(0);
+    const setIssueCount = vi.fn();
     const document = createFakeDocument(
       'await db.Products.CountAsync();',
       'file:///workspace/ProductService.cs',
     ) as PublishableDocument;
 
-    await analyzeCurrentDocument({
-      getActiveEditor: () => ({ document }),
-      analysisService: { analyze },
-      coordinator: new AnalysisCoordinator(),
-      diagnosticService: { publish },
-      configuration: new QueryForgeConfiguration(
-        createConfigurationReader({
-          'queryforge.analysis.maxIssues': 25,
-          'queryforge.analysis.provider': 'ef-core',
-        }),
-      ),
-      output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-      statusBar: { setIssueCount: vi.fn() },
-      workspace: { asRelativePath: () => 'ProductService.cs' },
-      showOnError: true,
-    });
+    await analyzeCurrentDocument(
+      createDeps({
+        getActiveEditor: () => ({ document }),
+        analysisService: { analyze },
+        diagnosticService: { publish },
+        statusBar: { setIssueCount },
+        configuration: new QueryForgeConfiguration(
+          createConfigurationReader({
+            'queryforge.analysis.maxIssues': 25,
+            'queryforge.analysis.provider': 'ef-core',
+          }),
+        ),
+        workspace: { asRelativePath: () => 'ProductService.cs' },
+      }),
+    );
 
     expect(analyze).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -101,6 +115,26 @@ describe('analyze-document.service', () => {
       }),
       expect.objectContaining({ maxIssues: 25 }),
     );
+    expect(setIssueCount).toHaveBeenCalledWith(
+      'file:///workspace/ProductService.cs',
+      0,
+    );
+  });
+
+  it('does not show feedback for valid csharp analysis', async () => {
+    const analyze = vi.fn().mockReturnValue(createAnalysisResult([]));
+    const showInformationMessage = vi.fn();
+    const document = createFakeDocument('code', 'file:///a.cs') as PublishableDocument;
+
+    await analyzeCurrentDocument(
+      createDeps({
+        getActiveEditor: () => ({ document }),
+        analysisService: { analyze },
+        showInformationMessage,
+      }),
+    );
+
+    expect(showInformationMessage).not.toHaveBeenCalled();
   });
 
   it('discards stale results after document version changes', async () => {
@@ -117,17 +151,13 @@ describe('analyze-document.service', () => {
       get: () => version,
     });
 
-    await analyzeCurrentDocument({
-      getActiveEditor: () => ({ document }),
-      analysisService: { analyze },
-      coordinator: new AnalysisCoordinator(),
-      diagnosticService: { publish },
-      configuration: new QueryForgeConfiguration(createConfigurationReader({})),
-      output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-      statusBar: { setIssueCount: vi.fn() },
-      workspace: { asRelativePath: () => 'a.cs' },
-      showOnError: true,
-    });
+    await analyzeCurrentDocument(
+      createDeps({
+        getActiveEditor: () => ({ document }),
+        analysisService: { analyze },
+        diagnosticService: { publish },
+      }),
+    );
 
     expect(publish).not.toHaveBeenCalled();
   });
@@ -141,17 +171,12 @@ describe('analyze-document.service', () => {
     const document = createFakeDocument('code', 'file:///a.cs') as PublishableDocument;
 
     await expect(
-      analyzeCurrentDocument({
-        getActiveEditor: () => ({ document }),
-        analysisService: { analyze },
-        coordinator: new AnalysisCoordinator(),
-        diagnosticService: { publish: vi.fn() },
-        configuration: new QueryForgeConfiguration(createConfigurationReader({})),
-        output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-        statusBar: { setIssueCount: vi.fn() },
-        workspace: { asRelativePath: () => 'a.cs' },
-        showOnError: true,
-      }),
+      analyzeCurrentDocument(
+        createDeps({
+          getActiveEditor: () => ({ document }),
+          analysisService: { analyze },
+        }),
+      ),
     ).resolves.toBeUndefined();
   });
 });

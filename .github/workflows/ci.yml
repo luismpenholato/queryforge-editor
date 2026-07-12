@@ -50,7 +50,7 @@ jobs:
         run: npm run list
 
       - name: Package VSIX
-        run: npx vsce package
+        run: npm run package
 
       - name: Validate VSIX
         run: node scripts/validate-package.mjs

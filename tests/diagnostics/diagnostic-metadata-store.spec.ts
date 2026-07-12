@@ -111,4 +111,25 @@ describe('DiagnosticMetadataStore', () => {
 
     expect(store.size()).toBe(1);
   });
+
+  it('detects metadata for a uri', () => {
+    const store = new DiagnosticMetadataStore();
+    const uri = 'file:///a.cs';
+
+    expect(store.hasForUri(uri)).toBe(false);
+
+    store.replaceForUri(uri, [
+      {
+        smell,
+        analysisKind: 'document',
+        baseOffset: 0,
+        analyzedCodeLength: 10,
+        documentVersion: 1,
+        key: buildDiagnosticKey(uri, 0, 5, smell.code),
+      },
+    ]);
+
+    expect(store.hasForUri(uri)).toBe(true);
+    expect(store.hasForUri('file:///b.cs')).toBe(false);
+  });
 });

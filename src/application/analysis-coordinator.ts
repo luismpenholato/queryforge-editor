@@ -63,12 +63,14 @@ export class AnalysisCoordinator {
     this.contexts.clear();
   }
 
-  abortForUri(documentUri: string): void {
+  abortByUri(documentUri: string): void {
     const controller = this.controllers.get(documentUri);
-    if (controller) {
-      controller.abort();
-      this.controllers.delete(documentUri);
-      this.contexts.delete(documentUri);
+    if (!controller) {
+      return;
     }
+
+    controller.abort();
+    this.controllers.delete(documentUri);
+    this.contexts.delete(documentUri);
   }
 }

@@ -43,6 +43,8 @@ Each QueryForge diagnostic includes:
 
 Hover over a diagnostic to see explanation, suggestion, rewrite plan and confidence.
 
+Diagnostics are cleared when the document changes. Run the analysis again to refresh the results.
+
 ## Safe fixes
 
 Quick Fix actions are offered only when `fix.safety === "safe"`.

@@ -99,7 +99,7 @@ jobs:
         id: package
         shell: bash
         run: |
-          npx vsce package
+          npm run package
           VSIX_FILE="$(ls -1 queryforge-editor-${{ steps.version.outputs.version }}.vsix)"
           echo "file=$VSIX_FILE" >> "$GITHUB_OUTPUT"
 

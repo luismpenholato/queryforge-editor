@@ -44,8 +44,11 @@ export interface DiagnosticServiceLike {
 }
 
 export interface StatusBarLike {
-  setIssueCount(count: number): void;
+  setIssueCount(uri: string, count: number): void;
 }
+
+export const NO_ACTIVE_EDITOR_MESSAGE = 'Open a C# file before running QueryForge.';
+export const NON_CSHARP_FILE_MESSAGE = 'QueryForge currently analyzes C# files only.';
 
 export interface AnalyzeDocumentDependencies {
   getActiveEditor(): TextEditorLike | undefined;
@@ -57,6 +60,7 @@ export interface AnalyzeDocumentDependencies {
   statusBar: StatusBarLike;
   workspace: WorkspaceLike;
   showOnError: boolean;
+  showInformationMessage(message: string): void;
 }
 
 export function resolveAnalysisFilePath(
@@ -82,11 +86,13 @@ export async function analyzeCurrentDocument(
 ): Promise<void> {
   const editor = deps.getActiveEditor();
   if (!editor) {
+    deps.showInformationMessage(NO_ACTIVE_EDITOR_MESSAGE);
     return;
   }
 
   const document = editor.document;
   if (document.languageId !== 'csharp') {
+    deps.showInformationMessage(NON_CSHARP_FILE_MESSAGE);
     return;
   }
 
@@ -136,7 +142,7 @@ export async function analyzeCurrentDocument(
     });
 
     const elapsed = Date.now() - startedAt;
-    deps.statusBar.setIssueCount(issueCount);
+    deps.statusBar.setIssueCount(uri, issueCount);
     deps.output.log(
       issueCount > 0
         ? `Found ${issueCount} potential issues. Overall severity: ${result.severity}.`

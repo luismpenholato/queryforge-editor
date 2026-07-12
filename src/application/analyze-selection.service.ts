@@ -3,6 +3,8 @@ import type { AnalysisCoordinator } from './analysis-coordinator.js';
 import type { QueryForgeConfiguration } from '../configuration/queryforge-configuration.js';
 import type { OutputChannelLogger } from '../presentation/output-channel.js';
 import {
+  NON_CSHARP_FILE_MESSAGE,
+  NO_ACTIVE_EDITOR_MESSAGE,
   resolveAnalysisFilePath,
   type AnalysisServiceLike,
   type DiagnosticServiceLike,
@@ -41,11 +43,13 @@ export async function analyzeCurrentSelection(
 ): Promise<void> {
   const editor = deps.getActiveEditor();
   if (!editor) {
+    deps.showInformationMessage(NO_ACTIVE_EDITOR_MESSAGE);
     return;
   }
 
   const document = editor.document;
   if (document.languageId !== 'csharp') {
+    deps.showInformationMessage(NON_CSHARP_FILE_MESSAGE);
     return;
   }
 
@@ -58,12 +62,7 @@ export async function analyzeCurrentSelection(
 
   const uri = document.uri.toString();
   const initialVersion = document.version;
-  const selectedText = document
-    .getText()
-    .slice(
-      document.offsetAt(editor.selection.start),
-      document.offsetAt(editor.selection.end),
-    );
+  const selectedText = document.getText(editor.selection);
   const baseOffset = document.offsetAt(editor.selection.start);
   const filePath = resolveAnalysisFilePath(document.uri, deps.workspace);
   const displayName = filePath;
@@ -109,7 +108,7 @@ export async function analyzeCurrentSelection(
     });
 
     const elapsed = Date.now() - startedAt;
-    deps.statusBar.setIssueCount(issueCount);
+    deps.statusBar.setIssueCount(uri, issueCount);
     deps.output.log(
       issueCount > 0
         ? `Found ${issueCount} potential issues in selection. Overall severity: ${result.severity}.`

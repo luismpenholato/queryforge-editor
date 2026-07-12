@@ -4,6 +4,10 @@ import { QueryAnalysisService } from '@luispenholato/queryforge-mcp';
 import { AnalysisCoordinator } from './application/analysis-coordinator.js';
 import { analyzeCurrentDocument } from './application/analyze-document.service.js';
 import { analyzeCurrentSelection } from './application/analyze-selection.service.js';
+import {
+  handleDocumentChanged,
+  handleDocumentClosed,
+} from './application/document-lifecycle.js';
 import { registerAnalyzeCurrentFileCommand } from './commands/analyze-current-file.command.js';
 import { registerAnalyzeSelectionCommand } from './commands/analyze-selection.command.js';
 import { registerClearDiagnosticsCommand } from './commands/clear-diagnostics.command.js';
@@ -36,6 +40,27 @@ interface ExtensionServices {
 
 let services: ExtensionServices | undefined;
 
+function createDocumentLifecycleActions(
+  coordinator: AnalysisCoordinator,
+  diagnosticService: DiagnosticService,
+  statusBar: StatusBarPresenter,
+) {
+  return {
+    abortByUri(uri: string) {
+      coordinator.abortByUri(uri);
+    },
+    clearDiagnostics(uri: string) {
+      diagnosticService.clearByUri(vscode.Uri.parse(uri));
+    },
+    clearIssueCount(uri: string) {
+      statusBar.clearIssueCount(uri);
+    },
+    hasQueryForgeState(uri: string) {
+      return diagnosticService.hasForUri(vscode.Uri.parse(uri));
+    },
+  };
+}
+
 export function activate(context: ExtensionContext): void {
   const outputChannel = vscode.window.createOutputChannel('QueryForge');
   const output = createOutputChannelLogger(outputChannel);
@@ -48,6 +73,11 @@ export function activate(context: ExtensionContext): void {
   const configuration = new QueryForgeConfiguration(
     createVscodeConfigurationReader((section) => vscode.workspace.getConfiguration(section)),
   );
+  const lifecycleActions = createDocumentLifecycleActions(
+    coordinator,
+    diagnosticService,
+    statusBar,
+  );
 
   services = {
     analysisService,
@@ -58,6 +88,10 @@ export function activate(context: ExtensionContext): void {
     output,
     statusBar,
     outputChannel,
+  };
+
+  const showInformationMessage = (message: string) => {
+    void vscode.window.showInformationMessage(message);
   };
 
   const sharedDeps = () => {
@@ -76,6 +110,7 @@ export function activate(context: ExtensionContext): void {
       statusBar: services.statusBar,
       workspace: vscode.workspace,
       showOnError: settings.showOnError,
+      showInformationMessage,
     };
   };
 
@@ -93,9 +128,6 @@ export function activate(context: ExtensionContext): void {
       analyzeCurrentSelection({
         ...sharedDeps(),
         getActiveEditor: () => vscode.window.activeTextEditor,
-        showInformationMessage: (message) => {
-          void vscode.window.showInformationMessage(message);
-        },
       }),
     ),
     registerClearDiagnosticsCommand(() => {
@@ -127,11 +159,41 @@ export function activate(context: ExtensionContext): void {
       },
     ),
     vscode.window.onDidChangeActiveTextEditor((editor) => {
-      statusBar.updateForEditor(editor?.document.languageId);
+      statusBar.updateForEditor(editor);
+    }),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      handleDocumentChanged(
+        {
+          uri: event.document.uri.toString(),
+          languageId: event.document.languageId,
+          contentChangeCount: event.contentChanges.length,
+        },
+        lifecycleActions,
+      );
+
+      if (
+        vscode.window.activeTextEditor?.document.uri.toString() ===
+        event.document.uri.toString()
+      ) {
+        statusBar.updateForEditor(vscode.window.activeTextEditor);
+      }
+    }),
+    vscode.workspace.onDidCloseTextDocument((document) => {
+      handleDocumentClosed(
+        { uri: document.uri.toString() },
+        lifecycleActions,
+      );
+
+      if (
+        vscode.window.activeTextEditor?.document.uri.toString() ===
+        document.uri.toString()
+      ) {
+        statusBar.updateForEditor(vscode.window.activeTextEditor);
+      }
     }),
   );
 
-  statusBar.updateForEditor(vscode.window.activeTextEditor?.document.languageId);
+  statusBar.updateForEditor(vscode.window.activeTextEditor);
 }
 
 export function deactivate(): void {
