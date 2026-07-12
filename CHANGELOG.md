@@ -20,5 +20,12 @@ All notable changes to this project will be documented in this file.
 - Improved per-document status bar state.
 - Clear stale diagnostics when analyzed documents change or close.
 - Added clearer feedback when analysis is requested without an active C# file.
+- Improved Marketplace description and extension package validation.
+- Optimized the extension icon for Marketplace distribution.
+
+### Fixed
+
+- Fixed cross-platform VSIX validation by reading the package as a ZIP archive.
+- Validated the packaged extension manifest instead of only the local package metadata.
 
 [0.1.0]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.0

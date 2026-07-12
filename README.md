@@ -6,11 +6,17 @@
 [![Node.js 20](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/luismpenholato)
 
-Local-first query diagnostics and safe fixes for .NET LINQ and Entity Framework in VS Code-compatible editors.
-
-QueryForge Editor analyzes the C# code in your active editor, surfaces conservative query smells in the Problems Panel, and offers safe quick fixes when the analyzer can rewrite code with high confidence.
+QueryForge detects risky LINQ and Entity Framework query patterns directly in your editor. Analysis runs locally and provides diagnostics, detailed guidance and safe quick fixes.
 
 Built for VS Code and editors compatible with the VS Code extension ecosystem.
+
+## Quick start
+
+1. Open a C# file.
+2. Run `QueryForge: Analyze Current File`.
+3. Review findings in the editor or Problems Panel.
+4. Open the diagnostic details.
+5. Apply a safe Quick Fix when available.
 
 ## Features
 

@@ -1,11 +1,12 @@
 {
   "name": "queryforge-editor",
   "displayName": "QueryForge — EF & LINQ Analyzer",
-  "description": "Local-first query diagnostics and safe fixes for .NET LINQ and Entity Framework.",
+  "description": "Detect risky LINQ and Entity Framework query patterns locally with editor diagnostics, detailed guidance and safe quick fixes.",
   "version": "0.1.0",
   "publisher": "nebula-themes",
   "license": "MIT",
   "pricing": "Free",
+  "preview": true,
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -160,6 +161,7 @@
     "@types/node": "^22.15.21",
     "@types/vscode": "^1.96.0",
     "@vscode/vsce": "^3.9.2",
+    "adm-zip": "^0.5.18",
     "esbuild": "^0.25.5",
     "ovsx": "^1.0.1",
     "typescript": "^5.8.3",

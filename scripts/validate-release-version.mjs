@@ -21,6 +21,16 @@ const packageJson = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8
 const packageLock = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'));
 const changelog = readFileSync(resolve(root, 'CHANGELOG.md'), 'utf8');
 
+if (packageJson.name !== 'queryforge-editor') {
+  console.error(`package.json name ${packageJson.name} is not queryforge-editor.`);
+  process.exit(1);
+}
+
+if (packageJson.publisher !== 'nebula-themes') {
+  console.error(`package.json publisher ${packageJson.publisher} is not nebula-themes.`);
+  process.exit(1);
+}
+
 if (packageJson.version !== version) {
   console.error(`package.json version ${packageJson.version} does not match tag ${tagArg}.`);
   process.exit(1);
