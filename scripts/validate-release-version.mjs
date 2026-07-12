@@ -26,8 +26,8 @@ if (packageJson.name !== 'queryforge-editor') {
   process.exit(1);
 }
 
-if (packageJson.publisher !== 'queryforge') {
-  console.error(`package.json publisher ${packageJson.publisher} is not queryforge.`);
+if (packageJson.publisher !== 'queryforge-tools') {
+  console.error(`package.json publisher ${packageJson.publisher} is not queryforge-tools.`);
   process.exit(1);
 }
 

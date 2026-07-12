@@ -7,8 +7,8 @@ import {
 
 describe('extension identity', () => {
   it('defines the permanent publisher and extension id', () => {
-    expect(QUERYFORGE_PUBLISHER).toBe('queryforge');
+    expect(QUERYFORGE_PUBLISHER).toBe('queryforge-tools');
     expect(QUERYFORGE_EXTENSION_NAME).toBe('queryforge-editor');
-    expect(QUERYFORGE_EXTENSION_ID).toBe('queryforge.queryforge-editor');
+    expect(QUERYFORGE_EXTENSION_ID).toBe('queryforge-tools.queryforge-editor');
   });
 });

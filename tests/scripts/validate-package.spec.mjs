@@ -20,7 +20,7 @@ import {
 const expectedPackage = {
   name: 'queryforge-editor',
   version: '0.1.0',
-  publisher: 'queryforge',
+  publisher: 'queryforge-tools',
   pricing: 'Free',
   main: './dist/extension.js',
   displayName: 'QueryForge — EF & LINQ Analyzer',
@@ -244,7 +244,7 @@ describe('validate-package-lib', () => {
   it('validates packaged manifest fields', () => {
     expect(() =>
       validatePackagedManifest({ ...expectedPackage, publisher: 'wrong' }, expectedPackage),
-    ).toThrow(/Packaged publisher wrong is not queryforge/);
+    ).toThrow(/Packaged publisher wrong is not queryforge-tools/);
   });
 
   it('rejects packaged preview property', () => {

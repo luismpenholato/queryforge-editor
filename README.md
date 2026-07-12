@@ -191,7 +191,7 @@ Press `F5` in VS Code/Cursor to launch the Extension Development Host.
 
 Extension ID:
 
-`queryforge.queryforge-editor`
+`queryforge-tools.queryforge-editor`
 
 ## Community
 

@@ -62,9 +62,9 @@ describe('package manifest', () => {
   });
 
   it('uses the permanent queryforge publisher', () => {
-    expect(packageJson.publisher).toBe('queryforge');
+    expect(packageJson.publisher).toBe('queryforge-tools');
     expect(packageJson.name).toBe('queryforge-editor');
-    expect(`${packageJson.publisher}.${packageJson.name}`).toBe('queryforge.queryforge-editor');
+    expect(`${packageJson.publisher}.${packageJson.name}`).toBe('queryforge-tools.queryforge-editor');
   });
 
   it('does not declare a preview marketplace label', () => {

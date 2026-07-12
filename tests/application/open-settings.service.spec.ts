@@ -15,7 +15,7 @@ describe('open-settings.service', () => {
     expect(SETTINGS_EXTENSION_FILTER).toBe(`@ext:${QUERYFORGE_EXTENSION_ID}`);
     expect(executeCommand).toHaveBeenCalledWith(
       OPEN_SETTINGS_COMMAND,
-      '@ext:queryforge.queryforge-editor',
+      '@ext:queryforge-tools.queryforge-editor',
     );
   });
 });
