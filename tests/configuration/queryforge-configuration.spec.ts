@@ -43,4 +43,19 @@ describe('QueryForgeConfiguration', () => {
 
     expect(config.getSettings().showOnError).toBe(false);
   });
+
+  it('defaults runOnSave to false', () => {
+    const config = new QueryForgeConfiguration(createConfigurationReader({}));
+    expect(config.getSettings().runOnSave).toBe(false);
+  });
+
+  it('reads runOnSave setting', () => {
+    const config = new QueryForgeConfiguration(
+      createConfigurationReader({
+        'queryforge.analysis.runOnSave': true,
+      }),
+    );
+
+    expect(config.getSettings().runOnSave).toBe(true);
+  });
 });

@@ -34,15 +34,25 @@ const expectedPackage = {
       { command: 'queryforge.clearDiagnostics' },
       { command: 'queryforge.showOutput' },
       { command: 'queryforge.supportProject' },
+      { command: 'queryforge.openExample' },
+      { command: 'queryforge.openSettings' },
     ],
+    walkthroughs: [{ id: 'queryforge.getStarted', steps: [] }],
+    configuration: {
+      properties: {
+        'queryforge.analysis.runOnSave': { type: 'boolean', default: false },
+      },
+    },
   },
 };
 
 function createValidBundle() {
   return [
     'var vscode = require("vscode");',
-    '@luispenholato/queryforge-mcp',
+    'COUNT_GREATER_THAN_ZERO',
+    'MISSING_AS_NO_TRACKING',
     'queryforge.analyzeCurrentFile',
+    'queryforge.openExample',
     'x'.repeat(45_000),
   ].join('\n');
 }
@@ -188,11 +198,28 @@ describe('validate-package-lib', () => {
   it('rejects bundle without external vscode', () => {
     expect(() =>
       validateBundleSource(
-        ['@luispenholato/queryforge-mcp', 'queryforge.analyzeCurrentFile', 'x'.repeat(45_000)].join(
-          '\n',
-        ),
+        [
+          'COUNT_GREATER_THAN_ZERO',
+          'MISSING_AS_NO_TRACKING',
+          'queryforge.analyzeCurrentFile',
+          'queryforge.openExample',
+          'x'.repeat(45_000),
+        ].join('\n'),
       ),
     ).toThrow(/require\("vscode"\)/);
+  });
+
+  it('rejects bundle without rule markers', () => {
+    expect(() =>
+      validateBundleSource(
+        [
+          'var vscode = require("vscode");',
+          'queryforge.analyzeCurrentFile',
+          'queryforge.openExample',
+          'x'.repeat(45_000),
+        ].join('\n'),
+      ),
+    ).toThrow(/rule markers/);
   });
 
   it('fails when multiple VSIX files are found', () => {

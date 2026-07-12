@@ -29,6 +29,18 @@ describe('document lifecycle', () => {
     expect(actions.clearIssueCount).toHaveBeenCalledWith(uri);
   });
 
+  it('aborts when queryforge state exists from active analysis', () => {
+    const actions = createActions();
+    actions.hasQueryForgeState.mockReturnValue(true);
+
+    handleDocumentChanged(
+      { uri, languageId: 'csharp', contentChangeCount: 1 },
+      actions,
+    );
+
+    expect(actions.abortByUri).toHaveBeenCalledWith(uri);
+  });
+
   it('ignores documents without queryforge state', () => {
     const actions = createActions();
     actions.hasQueryForgeState.mockReturnValue(false);

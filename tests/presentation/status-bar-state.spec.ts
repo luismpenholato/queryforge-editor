@@ -44,7 +44,30 @@ describe('PerDocumentIssueCounts', () => {
     });
   });
 
-  it('clears one document without affecting another', () => {
+  it('shows running state for active document', () => {
+    const counts = new PerDocumentIssueCounts();
+    counts.setAnalyzing(uriA);
+
+    expect(counts.resolveActiveView(uriA, 'csharp')).toEqual({
+      state: 'running',
+      issueCount: 0,
+      visible: true,
+    });
+  });
+
+  it('clears running state when issue count is set', () => {
+    const counts = new PerDocumentIssueCounts();
+    counts.setAnalyzing(uriA);
+    counts.setIssueCount(uriA, 2);
+
+    expect(counts.resolveActiveView(uriA, 'csharp')).toEqual({
+      state: 'issues',
+      issueCount: 2,
+      visible: true,
+    });
+  });
+
+  it('returns to idle after clearing issue count', () => {
     const counts = new PerDocumentIssueCounts();
     counts.setIssueCount(uriA, 3);
     counts.setIssueCount(uriB, 1);

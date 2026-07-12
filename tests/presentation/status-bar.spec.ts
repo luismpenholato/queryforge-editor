@@ -11,6 +11,12 @@ describe('status bar view model', () => {
     expect(viewModel.visible).toBe(true);
   });
 
+  it('shows running state', () => {
+    const viewModel = createStatusBarViewModel('running', 0, true);
+    expect(viewModel.text).toBe('$(sync~spin) QueryForge');
+    expect(viewModel.tooltip).toBe('QueryForge is analyzing the current C# document');
+  });
+
   it('shows zero issues state', () => {
     const viewModel = createStatusBarViewModel('success', 0, true);
     expect(viewModel.text).toBe('$(check) QueryForge: 0');

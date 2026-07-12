@@ -17,7 +17,7 @@ function createDeps(overrides: Partial<Parameters<typeof analyzeCurrentSelection
     diagnosticService: { publish: vi.fn() },
     configuration: new QueryForgeConfiguration(createConfigurationReader({})),
     output: { log: vi.fn(), warn: vi.fn(), error: vi.fn(), show: vi.fn() },
-    statusBar: { setIssueCount: vi.fn() },
+    statusBar: { setIssueCount: vi.fn(), setAnalyzing: vi.fn(), clearAnalyzing: vi.fn() },
     workspace: { asRelativePath: () => 'a.cs' },
     showOnError: true,
     showInformationMessage: vi.fn(),
@@ -106,7 +106,7 @@ describe('analyze-selection.service', () => {
         }),
         analysisService: { analyze },
         diagnosticService: { publish },
-        statusBar: { setIssueCount },
+        statusBar: { setIssueCount, setAnalyzing: vi.fn(), clearAnalyzing: vi.fn() },
       }),
     );
 

@@ -2,15 +2,23 @@ import * as vscode from 'vscode';
 import type { ExtensionContext } from 'vscode';
 import { QueryAnalysisService } from '@luispenholato/queryforge-mcp';
 import { AnalysisCoordinator } from './application/analysis-coordinator.js';
-import { analyzeCurrentDocument } from './application/analyze-document.service.js';
+import {
+  analyzeCurrentDocument,
+  analyzeDocument,
+} from './application/analyze-document.service.js';
 import { analyzeCurrentSelection } from './application/analyze-selection.service.js';
 import {
   handleDocumentChanged,
   handleDocumentClosed,
 } from './application/document-lifecycle.js';
+import { openQueryForgeExample } from './application/open-example.service.js';
+import { openQueryForgeSettings } from './application/open-settings.service.js';
+import { shouldAnalyzeDocumentOnSave } from './application/save-analysis.handler.js';
 import { registerAnalyzeCurrentFileCommand } from './commands/analyze-current-file.command.js';
 import { registerAnalyzeSelectionCommand } from './commands/analyze-selection.command.js';
 import { registerClearDiagnosticsCommand } from './commands/clear-diagnostics.command.js';
+import { registerOpenExampleCommand } from './commands/open-example.command.js';
+import { registerOpenSettingsCommand } from './commands/open-settings.command.js';
 import { registerShowOutputCommand } from './commands/show-output.command.js';
 import { registerSupportProjectCommand } from './commands/support-project.command.js';
 import {
@@ -48,6 +56,7 @@ function createDocumentLifecycleActions(
   return {
     abortByUri(uri: string) {
       coordinator.abortByUri(uri);
+      statusBar.clearAnalyzing(uri);
     },
     clearDiagnostics(uri: string) {
       diagnosticService.clearByUri(vscode.Uri.parse(uri));
@@ -56,7 +65,10 @@ function createDocumentLifecycleActions(
       statusBar.clearIssueCount(uri);
     },
     hasQueryForgeState(uri: string) {
-      return diagnosticService.hasForUri(vscode.Uri.parse(uri));
+      return (
+        diagnosticService.hasForUri(vscode.Uri.parse(uri)) ||
+        coordinator.hasActiveAnalysis(uri)
+      );
     },
   };
 }
@@ -130,6 +142,21 @@ export function activate(context: ExtensionContext): void {
         getActiveEditor: () => vscode.window.activeTextEditor,
       }),
     ),
+    registerOpenExampleCommand(() =>
+      openQueryForgeExample({
+        openTextDocument: (options) => vscode.workspace.openTextDocument(options),
+        showTextDocument: (document) =>
+          vscode.window.showTextDocument(document as vscode.TextDocument),
+        showInformationMessage: (message, ...actions) =>
+          vscode.window.showInformationMessage(message, ...actions),
+        executeCommand: (command) => vscode.commands.executeCommand(command),
+      }),
+    ),
+    registerOpenSettingsCommand(() =>
+      openQueryForgeSettings({
+        executeCommand: (command, ...args) => vscode.commands.executeCommand(command, ...args),
+      }),
+    ),
     registerClearDiagnosticsCommand(() => {
       coordinator.abortAll();
       diagnosticService.clearAll();
@@ -190,6 +217,25 @@ export function activate(context: ExtensionContext): void {
       ) {
         statusBar.updateForEditor(vscode.window.activeTextEditor);
       }
+    }),
+    vscode.workspace.onDidSaveTextDocument((document) => {
+      const settings = configuration.getSettings();
+
+      if (!shouldAnalyzeDocumentOnSave(document, settings.runOnSave)) {
+        return;
+      }
+
+      void analyzeDocument(
+        {
+          ...sharedDeps(),
+          getActiveEditor: () => vscode.window.activeTextEditor,
+        },
+        document,
+        {
+          source: 'save',
+          suppressInvalidEditorMessages: true,
+        },
+      );
     }),
   );
 

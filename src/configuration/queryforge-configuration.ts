@@ -7,6 +7,7 @@ export interface QueryForgeSettings {
   maxIssues: number;
   minimumSeverity: MinimumSeverity;
   showOnError: boolean;
+  runOnSave: boolean;
 }
 
 const VALID_PROVIDERS: readonly QueryProvider[] = [
@@ -22,6 +23,7 @@ const DEFAULT_SETTINGS: QueryForgeSettings = {
   maxIssues: 100,
   minimumSeverity: 'info',
   showOnError: true,
+  runOnSave: false,
 };
 
 export interface ConfigurationReader {
@@ -36,12 +38,14 @@ export class QueryForgeConfiguration {
     const maxIssues = this.reader.get<number>('queryforge', 'analysis.maxIssues');
     const minimumSeverity = this.reader.get<string>('queryforge', 'diagnostics.minimumSeverity');
     const showOnError = this.reader.get<boolean>('queryforge', 'output.showOnError');
+    const runOnSave = this.reader.get<boolean>('queryforge', 'analysis.runOnSave');
 
     return {
       provider: sanitizeProvider(provider),
       maxIssues: sanitizeMaxIssues(maxIssues),
       minimumSeverity: sanitizeMinimumSeverity(minimumSeverity),
       showOnError: typeof showOnError === 'boolean' ? showOnError : DEFAULT_SETTINGS.showOnError,
+      runOnSave: typeof runOnSave === 'boolean' ? runOnSave : DEFAULT_SETTINGS.runOnSave,
     };
   }
 }

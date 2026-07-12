@@ -5,6 +5,7 @@ import type {
   QuerySmell,
 } from '@luispenholato/queryforge-mcp';
 import type { AnalysisCoordinator } from './analysis-coordinator.js';
+import { buildAnalysisSummaryLines } from './analysis-summary.js';
 import type { PublishableEditorDocument } from '../diagnostics/diagnostic-service.js';
 import type { QueryForgeConfiguration } from '../configuration/queryforge-configuration.js';
 import type { OutputChannelLogger } from '../presentation/output-channel.js';
@@ -45,6 +46,15 @@ export interface DiagnosticServiceLike {
 
 export interface StatusBarLike {
   setIssueCount(uri: string, count: number): void;
+  setAnalyzing(uri: string): void;
+  clearAnalyzing(uri: string): void;
+}
+
+export type AnalysisSource = 'manual' | 'save';
+
+export interface AnalyzeDocumentOptions {
+  source?: AnalysisSource;
+  suppressInvalidEditorMessages?: boolean;
 }
 
 export const NO_ACTIVE_EDITOR_MESSAGE = 'Open a C# file before running QueryForge.';
@@ -83,16 +93,28 @@ export function resolveAnalysisFilePath(
 
 export async function analyzeCurrentDocument(
   deps: AnalyzeDocumentDependencies,
+  options: AnalyzeDocumentOptions = {},
 ): Promise<void> {
   const editor = deps.getActiveEditor();
   if (!editor) {
-    deps.showInformationMessage(NO_ACTIVE_EDITOR_MESSAGE);
+    if (!options.suppressInvalidEditorMessages) {
+      deps.showInformationMessage(NO_ACTIVE_EDITOR_MESSAGE);
+    }
     return;
   }
 
-  const document = editor.document;
+  await analyzeDocument(deps, editor.document, options);
+}
+
+export async function analyzeDocument(
+  deps: AnalyzeDocumentDependencies,
+  document: PublishableDocument,
+  options: AnalyzeDocumentOptions = {},
+): Promise<void> {
   if (document.languageId !== 'csharp') {
-    deps.showInformationMessage(NON_CSHARP_FILE_MESSAGE);
+    if (!options.suppressInvalidEditorMessages) {
+      deps.showInformationMessage(NON_CSHARP_FILE_MESSAGE);
+    }
     return;
   }
 
@@ -102,6 +124,7 @@ export async function analyzeCurrentDocument(
   const displayName = filePath;
 
   const controller = deps.coordinator.beginAnalysis(uri, initialVersion, 'document');
+  deps.statusBar.setAnalyzing(uri);
   const startedAt = Date.now();
 
   deps.output.log(`Analyzing ${displayName}...`);
@@ -123,10 +146,12 @@ export async function analyzeCurrentDocument(
 
     if (document.version !== initialVersion) {
       deps.output.log(`Discarded stale analysis result for ${displayName}.`);
+      deps.statusBar.clearAnalyzing(uri);
       return;
     }
 
     if (deps.coordinator.isStaleResult(uri, initialVersion, 'document')) {
+      deps.statusBar.clearAnalyzing(uri);
       return;
     }
 
@@ -143,13 +168,19 @@ export async function analyzeCurrentDocument(
 
     const elapsed = Date.now() - startedAt;
     deps.statusBar.setIssueCount(uri, issueCount);
-    deps.output.log(
-      issueCount > 0
-        ? `Found ${issueCount} potential issues. Overall severity: ${result.severity}.`
-        : 'Found 0 potential issues.',
-    );
+
+    for (const line of buildAnalysisSummaryLines({
+      smells: result.smells,
+      minimumSeverity: settings.minimumSeverity,
+      issueCount,
+    })) {
+      deps.output.log(line);
+    }
+
     deps.output.log(`Analysis completed in ${elapsed}ms.`);
   } catch (error) {
+    deps.statusBar.clearAnalyzing(uri);
+
     if (isAbortError(error)) {
       return;
     }

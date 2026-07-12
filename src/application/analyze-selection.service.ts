@@ -1,5 +1,6 @@
 import type * as vscode from 'vscode';
 import type { AnalysisCoordinator } from './analysis-coordinator.js';
+import { buildAnalysisSummaryLines } from './analysis-summary.js';
 import type { QueryForgeConfiguration } from '../configuration/queryforge-configuration.js';
 import type { OutputChannelLogger } from '../presentation/output-channel.js';
 import {
@@ -68,6 +69,7 @@ export async function analyzeCurrentSelection(
   const displayName = filePath;
 
   const controller = deps.coordinator.beginAnalysis(uri, initialVersion, 'selection');
+  deps.statusBar.setAnalyzing(uri);
   const startedAt = Date.now();
 
   deps.output.log(`Analyzing selection in ${displayName}...`);
@@ -89,10 +91,12 @@ export async function analyzeCurrentSelection(
 
     if (document.version !== initialVersion) {
       deps.output.log(`Discarded stale selection analysis for ${displayName}.`);
+      deps.statusBar.clearAnalyzing(uri);
       return;
     }
 
     if (deps.coordinator.isStaleResult(uri, initialVersion, 'selection')) {
+      deps.statusBar.clearAnalyzing(uri);
       return;
     }
 
@@ -109,13 +113,19 @@ export async function analyzeCurrentSelection(
 
     const elapsed = Date.now() - startedAt;
     deps.statusBar.setIssueCount(uri, issueCount);
-    deps.output.log(
-      issueCount > 0
-        ? `Found ${issueCount} potential issues in selection. Overall severity: ${result.severity}.`
-        : 'Found 0 potential issues in selection.',
-    );
+
+    for (const line of buildAnalysisSummaryLines({
+      smells: result.smells,
+      minimumSeverity: settings.minimumSeverity,
+      issueCount,
+    })) {
+      deps.output.log(line);
+    }
+
     deps.output.log(`Analysis completed in ${elapsed}ms.`);
   } catch (error) {
+    deps.statusBar.clearAnalyzing(uri);
+
     if (isAbortError(error)) {
       return;
     }

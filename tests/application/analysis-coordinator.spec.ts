@@ -43,6 +43,17 @@ describe('AnalysisCoordinator', () => {
     expect(() => coordinator.abortByUri('file:///missing.cs')).not.toThrow();
   });
 
+  it('reports active analysis by uri', () => {
+    const coordinator = new AnalysisCoordinator();
+    expect(coordinator.hasActiveAnalysis('file:///a.cs')).toBe(false);
+
+    coordinator.beginAnalysis('file:///a.cs', 1, 'document');
+    expect(coordinator.hasActiveAnalysis('file:///a.cs')).toBe(true);
+
+    coordinator.abortByUri('file:///a.cs');
+    expect(coordinator.hasActiveAnalysis('file:///a.cs')).toBe(false);
+  });
+
   it('aborts all pending analyses', () => {
     const coordinator = new AnalysisCoordinator();
     const first = coordinator.beginAnalysis('file:///a.cs', 1, 'document');

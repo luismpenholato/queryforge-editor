@@ -25,6 +25,16 @@ export class StatusBarPresenter {
     this.render();
   }
 
+  setAnalyzing(uri: string): void {
+    this.issueCounts.setAnalyzing(uri);
+    this.render();
+  }
+
+  clearAnalyzing(uri: string): void {
+    this.issueCounts.clearAnalyzing(uri);
+    this.render();
+  }
+
   setIssueCount(uri: string, count: number): void {
     this.issueCounts.setIssueCount(uri, count);
     this.render();

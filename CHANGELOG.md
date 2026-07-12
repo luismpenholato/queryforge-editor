@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file.
 - Added configurable provider, issue limit and minimum severity.
 - Added support links and local-first privacy documentation.
 - Added CI, VSIX packaging and marketplace publishing workflows.
+- Added a built-in fictional C# example for quickly trying QueryForge.
+- Added a native Getting Started walkthrough.
+- Added an optional analyze-on-save setting.
+- Added a command for opening QueryForge settings.
+- Added per-document analysis progress in the status bar.
+- Added severity and safe-fix summaries to the Output Channel.
 
 ### Changed
 
@@ -22,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - Added clearer feedback when analysis is requested without an active C# file.
 - Improved Marketplace description and extension package validation.
 - Optimized the extension icon for Marketplace distribution.
+- Expanded documentation with usage examples and a quick-start workflow.
+- Improved VSIX bundle validation markers.
 
 ### Fixed
 

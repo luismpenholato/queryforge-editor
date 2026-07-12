@@ -10,6 +10,14 @@ QueryForge detects risky LINQ and Entity Framework query patterns directly in yo
 
 Built for VS Code and editors compatible with the VS Code extension ecosystem.
 
+## Try it in 30 seconds
+
+1. Open the Command Palette.
+2. Run `QueryForge: Open Example`.
+3. Click **Analyze Example**.
+4. Review the findings in the editor or Problems Panel.
+5. Use the lightbulb action on a diagnostic with a safe fix.
+
 ## Quick start
 
 1. Open a C# file.
@@ -18,15 +26,44 @@ Built for VS Code and editors compatible with the VS Code extension ecosystem.
 4. Open the diagnostic details.
 5. Apply a safe Quick Fix when available.
 
+## Example
+
+Before:
+
+```csharp
+var exists = await db.Products.CountAsync() > 0;
+```
+
+QueryForge reports `COUNT_GREATER_THAN_ZERO` and suggests:
+
+```csharp
+var exists = await db.Products.AnyAsync();
+```
+
+Another pattern without a safe fix:
+
+```csharp
+var products = await db.Products
+    .Where(product => product.CreatedAt.Year == year)
+    .ToListAsync();
+```
+
+QueryForge reports a function-on-column filter and recommends rewriting it as a date range. This requires review and is not automatically applied.
+
+Not every diagnostic includes a Quick Fix. Review-required suggestions stay in hover guidance and the Problems Panel.
+
 ## Features
 
 - Analyze the current C# file on demand
 - Analyze only the selected C# query or expression
+- Built-in fictional C# example for quick evaluation
+- Native Getting Started walkthrough
 - Diagnostics in the editor and Problems Panel
 - Detailed hover guidance with explanation, suggestion and rewrite plan
 - Safe Quick Fix actions for fixes marked as `safe`
-- Output Channel with concise analysis logs
-- Status bar shortcut for running analysis in C# files
+- Optional analyze-on-save for saved C# files
+- Output Channel with concise analysis summaries
+- Status bar shortcut with per-document analysis state
 
 ## Commands
 
@@ -34,9 +71,43 @@ Built for VS Code and editors compatible with the VS Code extension ecosystem.
 | --- | --- |
 | `QueryForge: Analyze Current File` | Analyze the active C# document |
 | `QueryForge: Analyze Current Selection` | Analyze the selected C# text |
+| `QueryForge: Open Example` | Open a built-in fictional C# example |
+| `QueryForge: Open Settings` | Open QueryForge extension settings |
 | `QueryForge: Clear Diagnostics` | Clear QueryForge diagnostics and metadata |
 | `QueryForge: Show Output` | Open the QueryForge output channel |
 | `QueryForge: Support the Project` | Open GitHub Sponsors |
+
+## Current capabilities
+
+| Capability | Available |
+| --- | --- |
+| Analyze current C# file | Yes |
+| Analyze selected code | Yes |
+| Editor diagnostics | Yes |
+| Problems Panel | Yes |
+| Detailed hover guidance | Yes |
+| Safe Quick Fixes | When provided by the Core |
+| Analyze on save | Optional |
+| Workspace analysis | Not yet |
+| Roslyn semantic analysis | No |
+| Database connection | No |
+| SQL execution | No |
+
+## Supported patterns
+
+QueryForge focuses on common query-performance smells, including:
+
+- early materialization
+- tracking overhead
+- existence checks using `Count`
+- unstable pagination and ordering
+- non-sargable filters
+- large `Take` operations
+- structural N+1 and round-trip patterns
+- unnecessary includes
+- client-side query behavior
+
+The extension consumes the local programmatic API from [QueryForge MCP/Core](https://github.com/luismpenholato/queryforge-mcp). It does not start the MCP server.
 
 ## Diagnostics
 
@@ -85,6 +156,7 @@ Availability depends on marketplace distribution and editor compatibility.
 | --- | --- | --- |
 | `queryforge.analysis.provider` | `ef-core` | Provider context passed to the analyzer |
 | `queryforge.analysis.maxIssues` | `100` | Maximum diagnostics per analysis |
+| `queryforge.analysis.runOnSave` | `false` | Analyze saved C# files automatically on save |
 | `queryforge.diagnostics.minimumSeverity` | `info` | Minimum severity shown in the editor |
 | `queryforge.output.showOnError` | `true` | Open output channel on analysis errors |
 

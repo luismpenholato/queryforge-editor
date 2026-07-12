@@ -15,6 +15,8 @@ export const REQUIRED_COMMANDS = [
   'queryforge.clearDiagnostics',
   'queryforge.showOutput',
   'queryforge.supportProject',
+  'queryforge.openExample',
+  'queryforge.openSettings',
 ];
 
 const FORBIDDEN_PREFIXES = [
@@ -28,10 +30,8 @@ const FORBIDDEN_PREFIXES = [
 ];
 
 const BUNDLE_MIN_BYTES = 40_000;
-const BUNDLE_MARKERS = [
-  '@luispenholato/queryforge-mcp',
-  'queryforge.analyzeCurrentFile',
-];
+const BUNDLE_RULE_MARKERS = ['COUNT_GREATER_THAN_ZERO', 'MISSING_AS_NO_TRACKING'];
+const BUNDLE_COMMAND_MARKERS = ['queryforge.analyzeCurrentFile', 'queryforge.openExample'];
 
 export function findVsixCandidates(cwd, expectedVersion) {
   return readdirSync(cwd)
@@ -103,10 +103,6 @@ export function readEntryBuffer(zip, entryName) {
 
 function hasEntry(entryNames, candidates) {
   return candidates.some((candidate) => entryNames.includes(candidate));
-}
-
-function findPackagedPackageJsonEntry(entryNames) {
-  return entryNames.find((entry) => entry === 'extension/package.json') ?? null;
 }
 
 export function isForbiddenEntry(entryName) {
@@ -183,6 +179,15 @@ export function validatePackagedManifest(packaged, expected) {
       throw new ValidationError(`Packaged command is missing: ${commandId}`);
     }
   }
+
+  const walkthroughs = packaged.contributes?.walkthroughs ?? [];
+  if (!walkthroughs.some((walkthrough) => walkthrough.id === 'queryforge.getStarted')) {
+    throw new ValidationError('Packaged walkthrough queryforge.getStarted is missing.');
+  }
+
+  if (!packaged.contributes?.configuration?.properties?.['queryforge.analysis.runOnSave']) {
+    throw new ValidationError('Packaged runOnSave configuration is missing.');
+  }
 }
 
 export function validateRequiredEntries(entryNames) {
@@ -234,9 +239,18 @@ export function validateBundleSource(bundleSource) {
     );
   }
 
-  const markerMatches = BUNDLE_MARKERS.filter((marker) => bundleSource.includes(marker)).length;
-  if (markerMatches < 2) {
-    throw new ValidationError('Bundle does not appear to include QueryForge analysis code.');
+  const ruleMarkerMatches = BUNDLE_RULE_MARKERS.filter((marker) =>
+    bundleSource.includes(marker),
+  ).length;
+  if (ruleMarkerMatches < 1) {
+    throw new ValidationError('Bundle does not include expected QueryForge rule markers.');
+  }
+
+  const commandMarkerMatches = BUNDLE_COMMAND_MARKERS.filter((marker) =>
+    bundleSource.includes(marker),
+  ).length;
+  if (commandMarkerMatches < 2) {
+    throw new ValidationError('Bundle does not include expected QueryForge command markers.');
   }
 }
 

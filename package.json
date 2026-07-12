@@ -55,7 +55,9 @@
     "onCommand:queryforge.analyzeSelection",
     "onCommand:queryforge.clearDiagnostics",
     "onCommand:queryforge.showOutput",
-    "onCommand:queryforge.supportProject"
+    "onCommand:queryforge.supportProject",
+    "onCommand:queryforge.openExample",
+    "onCommand:queryforge.openSettings"
   ],
   "contributes": {
     "commands": [
@@ -83,6 +85,79 @@
         "command": "queryforge.supportProject",
         "title": "QueryForge: Support the Project",
         "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.openExample",
+        "title": "QueryForge: Open Example",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.openSettings",
+        "title": "QueryForge: Open Settings",
+        "category": "QueryForge"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "queryforge.getStarted",
+        "title": "Get started with QueryForge",
+        "description": "Analyze risky LINQ and Entity Framework query patterns directly in your editor.",
+        "steps": [
+          {
+            "id": "queryforge.openExample",
+            "title": "Open a QueryForge example",
+            "description": "Open a fictional C# example containing common LINQ and Entity Framework performance smells.\n[Open Example](command:queryforge.openExample)",
+            "media": {
+              "image": "images/icon.png",
+              "altText": "QueryForge extension icon"
+            },
+            "completionEvents": [
+              "onCommand:queryforge.openExample"
+            ]
+          },
+          {
+            "id": "queryforge.analyzeCurrentFile",
+            "title": "Analyze the current file",
+            "description": "Run QueryForge and review findings in the editor and Problems Panel.\n[Analyze Current File](command:queryforge.analyzeCurrentFile)",
+            "media": {
+              "image": "images/icon.png",
+              "altText": "QueryForge extension icon"
+            },
+            "completionEvents": [
+              "onCommand:queryforge.analyzeCurrentFile"
+            ]
+          },
+          {
+            "id": "queryforge.reviewDiagnostic",
+            "title": "Review the diagnostic",
+            "description": "Hover over an underlined issue to see why it matters, the suggested rewrite and confidence level.",
+            "media": {
+              "image": "images/icon.png",
+              "altText": "QueryForge extension icon"
+            }
+          },
+          {
+            "id": "queryforge.applySafeFix",
+            "title": "Apply a safe Quick Fix",
+            "description": "Use the lightbulb action when QueryForge provides a structured fix marked as safe.",
+            "media": {
+              "image": "images/icon.png",
+              "altText": "QueryForge extension icon"
+            }
+          },
+          {
+            "id": "queryforge.openSettings",
+            "title": "Configure the analyzer",
+            "description": "Choose the query provider, maximum issue count and minimum diagnostic severity.\n[Open Settings](command:queryforge.openSettings)",
+            "media": {
+              "image": "images/icon.png",
+              "altText": "QueryForge extension icon"
+            },
+            "completionEvents": [
+              "onCommand:queryforge.openSettings"
+            ]
+          }
+        ]
       }
     ],
     "menus": {
@@ -120,6 +195,11 @@
           "minimum": 1,
           "maximum": 1000,
           "description": "Maximum number of diagnostics returned per analysis."
+        },
+        "queryforge.analysis.runOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Analyze C# documents automatically when they are saved."
         },
         "queryforge.diagnostics.minimumSeverity": {
           "type": "string",

@@ -73,4 +73,8 @@ export class AnalysisCoordinator {
     this.controllers.delete(documentUri);
     this.contexts.delete(documentUri);
   }
+
+  hasActiveAnalysis(documentUri: string): boolean {
+    return this.controllers.has(documentUri);
+  }
 }
