@@ -1,5 +1,6 @@
 # QueryForge — EF & LINQ Analyzer
 
+[![CI](https://github.com/luismpenholato/queryforge-editor/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/luismpenholato/queryforge-editor/actions/workflows/ci.yml)
 [![VS Marketplace Version](https://vsmarketplacebadges.dev/version/queryforge-tools.queryforge-editor.svg?label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=queryforge-tools.queryforge-editor)
 [![VS Marketplace Installs](https://vsmarketplacebadges.dev/installs/queryforge-tools.queryforge-editor.svg?label=Installs)](https://marketplace.visualstudio.com/items?itemName=queryforge-tools.queryforge-editor)
 [![Open VSX Version](https://img.shields.io/open-vsx/v/queryforge-tools/queryforge-editor?label=Open%20VSX)](https://open-vsx.org/extension/queryforge-tools/queryforge-editor)
@@ -10,6 +11,10 @@
 QueryForge detects risky LINQ and Entity Framework query patterns directly in your editor. Analysis runs locally and provides diagnostics, detailed guidance and safe quick fixes.
 
 Built for VS Code and editors compatible with the VS Code extension ecosystem.
+
+[Install](#install) · [Try it](#try-it-in-30-seconds) · [Example](#example) · [Configuration](#configuration) · [Limitations](#limitations) · [Development](#development)
+
+Analysis is heuristic, not Roslyn semantic analysis. A diagnostic is a review aid, not proof of a performance problem; validate changes against your tests and generated SQL.
 
 ## Install
 
@@ -97,31 +102,31 @@ Not every diagnostic includes a Quick Fix. Review-required suggestions stay in h
 
 ## Commands
 
-| Command | Description |
-| --- | --- |
-| `QueryForge: Analyze Current File` | Analyze the active C# document |
-| `QueryForge: Analyze Current Selection` | Analyze the selected C# text |
-| `QueryForge: Open Example` | Open a built-in fictional C# example |
-| `QueryForge: Open Settings` | Open QueryForge extension settings |
-| `QueryForge: Clear Diagnostics` | Clear QueryForge diagnostics and metadata |
-| `QueryForge: Show Output` | Open the QueryForge output channel |
-| `QueryForge: Support the Project` | Open GitHub Sponsors |
+| Command                                 | Description                               |
+| --------------------------------------- | ----------------------------------------- |
+| `QueryForge: Analyze Current File`      | Analyze the active C# document            |
+| `QueryForge: Analyze Current Selection` | Analyze the selected C# text              |
+| `QueryForge: Open Example`              | Open a built-in fictional C# example      |
+| `QueryForge: Open Settings`             | Open QueryForge extension settings        |
+| `QueryForge: Clear Diagnostics`         | Clear QueryForge diagnostics and metadata |
+| `QueryForge: Show Output`               | Open the QueryForge output channel        |
+| `QueryForge: Support the Project`       | Open GitHub Sponsors                      |
 
 ## Current capabilities
 
-| Capability | Available |
-| --- | --- |
-| Analyze current C# file | Yes |
-| Analyze selected code | Yes |
-| Editor diagnostics | Yes |
-| Problems Panel | Yes |
-| Detailed hover guidance | Yes |
-| Safe Quick Fixes | When provided by the Core |
-| Analyze on save | Optional |
-| Workspace analysis | Not yet |
-| Roslyn semantic analysis | No |
-| Database connection | No |
-| SQL execution | No |
+| Capability               | Available                 |
+| ------------------------ | ------------------------- |
+| Analyze current C# file  | Yes                       |
+| Analyze selected code    | Yes                       |
+| Editor diagnostics       | Yes                       |
+| Problems Panel           | Yes                       |
+| Detailed hover guidance  | Yes                       |
+| Safe Quick Fixes         | When provided by the Core |
+| Analyze on save          | Optional                  |
+| Workspace analysis       | Not yet                   |
+| Roslyn semantic analysis | No                        |
+| Database connection      | No                        |
+| SQL execution            | No                        |
 
 ## Supported patterns
 
@@ -182,13 +187,13 @@ Availability depends on marketplace distribution and editor compatibility.
 
 ## Configuration
 
-| Setting | Default | Description |
-| --- | --- | --- |
-| `queryforge.analysis.provider` | `ef-core` | Provider context passed to the analyzer |
-| `queryforge.analysis.maxIssues` | `100` | Maximum diagnostics per analysis |
-| `queryforge.analysis.runOnSave` | `false` | Analyze saved C# files automatically on save |
-| `queryforge.diagnostics.minimumSeverity` | `info` | Minimum severity shown in the editor |
-| `queryforge.output.showOnError` | `true` | Open output channel on analysis errors |
+| Setting                                  | Default   | Description                                  |
+| ---------------------------------------- | --------- | -------------------------------------------- |
+| `queryforge.analysis.provider`           | `ef-core` | Provider context passed to the analyzer      |
+| `queryforge.analysis.maxIssues`          | `100`     | Maximum diagnostics per analysis             |
+| `queryforge.analysis.runOnSave`          | `false`   | Analyze saved C# files automatically on save |
+| `queryforge.diagnostics.minimumSeverity` | `info`    | Minimum severity shown in the editor         |
+| `queryforge.output.showOnError`          | `true`    | Open output channel on analysis errors       |
 
 ## Privacy
 
