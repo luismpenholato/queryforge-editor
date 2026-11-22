@@ -235,6 +235,8 @@
     "list": "vsce ls",
     "package": "vsce package",
     "validate:package": "node scripts/validate-package.mjs",
+    "changelog:ensure-links": "node scripts/ensure-changelog-release-links.mjs",
+    "validate:release": "node scripts/validate-release-version.mjs",
     "validate": "npm run build && npm run list && npm run package && npm run validate:package",
     "publish:vsce": "npm run build && vsce publish",
     "publish:ovsx": "npm run build && ovsx publish"

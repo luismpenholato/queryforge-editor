@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 - Aligned the Core dependency to `@luispenholato/queryforge-mcp@^0.7.1`.
 - Clarified positioning: local developer tooling with optional Sponsors support, not a Sponsors product.
+- Auto-generate missing Keep a Changelog release footer links during release validation.
 
 ## [0.1.1] - 2026-07-12
 
