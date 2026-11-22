@@ -2,7 +2,7 @@
   "name": "queryforge-editor",
   "displayName": "QueryForge — EF & LINQ Analyzer",
   "description": "Detect risky LINQ and Entity Framework query patterns locally with editor diagnostics, detailed guidance and safe quick fixes.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "queryforge-tools",
   "license": "MIT",
   "pricing": "Free",
@@ -52,6 +52,7 @@
     "onLanguage:csharp",
     "onCommand:queryforge.analyzeCurrentFile",
     "onCommand:queryforge.analyzeSelection",
+    "onCommand:queryforge.analyzeOpenDocuments",
     "onCommand:queryforge.clearDiagnostics",
     "onCommand:queryforge.showOutput",
     "onCommand:queryforge.supportProject",
@@ -68,6 +69,11 @@
       {
         "command": "queryforge.analyzeSelection",
         "title": "QueryForge: Analyze Current Selection",
+        "category": "QueryForge"
+      },
+      {
+        "command": "queryforge.analyzeOpenDocuments",
+        "title": "QueryForge: Analyze Open Documents",
         "category": "QueryForge"
       },
       {
@@ -234,7 +240,7 @@
     "publish:ovsx": "npm run build && ovsx publish"
   },
   "dependencies": {
-    "@luispenholato/queryforge-mcp": "^0.7.0"
+    "@luispenholato/queryforge-mcp": "^0.7.1"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",

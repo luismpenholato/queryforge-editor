@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2026-11-22
+
+### Added
+
+- Added `QueryForge: Analyze Open Documents` to analyze every open C# file in one pass.
+- Added false-positive guidance and a version compatibility matrix with QueryForge MCP/Core.
+
+### Changed
+
+- Aligned the Core dependency to `@luispenholato/queryforge-mcp@^0.7.1`.
+- Clarified positioning: local developer tooling with optional Sponsors support, not a Sponsors product.
+
 ## [0.1.1] - 2026-07-12
 
 ### Added

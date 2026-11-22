@@ -6,6 +6,7 @@ import {
   analyzeCurrentDocument,
   analyzeDocument,
 } from './application/analyze-document.service.js';
+import { analyzeOpenDocuments } from './application/analyze-open-documents.service.js';
 import { analyzeCurrentSelection } from './application/analyze-selection.service.js';
 import {
   handleDocumentChanged,
@@ -15,6 +16,7 @@ import { openQueryForgeExample } from './application/open-example.service.js';
 import { openQueryForgeSettings } from './application/open-settings.service.js';
 import { shouldAnalyzeDocumentOnSave } from './application/save-analysis.handler.js';
 import { registerAnalyzeCurrentFileCommand } from './commands/analyze-current-file.command.js';
+import { registerAnalyzeOpenDocumentsCommand } from './commands/analyze-open-documents.command.js';
 import { registerAnalyzeSelectionCommand } from './commands/analyze-selection.command.js';
 import { registerClearDiagnosticsCommand } from './commands/clear-diagnostics.command.js';
 import { registerOpenExampleCommand } from './commands/open-example.command.js';
@@ -140,6 +142,13 @@ export function activate(context: ExtensionContext): void {
       analyzeCurrentSelection({
         ...sharedDeps(),
         getActiveEditor: () => vscode.window.activeTextEditor,
+      }),
+    ),
+    registerAnalyzeOpenDocumentsCommand(() =>
+      analyzeOpenDocuments({
+        ...sharedDeps(),
+        getActiveEditor: () => vscode.window.activeTextEditor,
+        getOpenDocuments: () => vscode.workspace.textDocuments,
       }),
     ),
     registerOpenExampleCommand(() =>

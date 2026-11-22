@@ -12,7 +12,9 @@ QueryForge detects risky LINQ and Entity Framework query patterns directly in yo
 
 Built for VS Code and editors compatible with the VS Code extension ecosystem.
 
-[Install](#install) · [Try it](#try-it-in-30-seconds) · [Example](#example) · [Configuration](#configuration) · [Limitations](#limitations) · [Development](#development)
+This is free local developer tooling. GitHub Sponsors is optional support for maintenance — QueryForge is not a Sponsors-gated product.
+
+[Install](#install) · [Try it](#try-it-in-30-seconds) · [Example](#example) · [Ecosystem](#queryforge-ecosystem) · [Configuration](#configuration) · [When not to trust a finding](#when-not-to-trust-a-finding) · [Development](#development)
 
 Analysis is heuristic, not Roslyn semantic analysis. A diagnostic is a review aid, not proof of a performance problem; validate changes against your tests and generated SQL.
 
@@ -47,11 +49,18 @@ antigravity --install-extension queryforge-editor-<version>.vsix
 
 ## Try it in 30 seconds
 
-1. Open the Command Palette.
+1. Open the Command Palette (`Ctrl+Shift+P`).
 2. Run `QueryForge: Open Example`.
-3. Click **Analyze Example**.
-4. Review the findings in the editor or Problems Panel.
-5. Use the lightbulb action on a diagnostic with a safe fix.
+3. Click **Analyze Example** (or run `QueryForge: Analyze Current File`).
+4. Open **Problems** (`Ctrl+Shift+M`) and hover an underlined finding.
+5. Use the lightbulb on a diagnostic marked as a safe fix.
+
+What you should see:
+
+- underlines in the editor for matched query smells;
+- entries in the Problems Panel with rule codes such as `COUNT_GREATER_THAN_ZERO`;
+- hover text with explanation, suggestion, rewrite plan and confidence;
+- a Quick Fix only when `fix.safety === "safe"`.
 
 ## Quick start
 
@@ -91,6 +100,7 @@ Not every diagnostic includes a Quick Fix. Review-required suggestions stay in h
 
 - Analyze the current C# file on demand
 - Analyze only the selected C# query or expression
+- Analyze every open C# document in one pass
 - Built-in fictional C# example for quick evaluation
 - Native Getting Started walkthrough
 - Diagnostics in the editor and Problems Panel
@@ -106,11 +116,12 @@ Not every diagnostic includes a Quick Fix. Review-required suggestions stay in h
 | --------------------------------------- | ----------------------------------------- |
 | `QueryForge: Analyze Current File`      | Analyze the active C# document            |
 | `QueryForge: Analyze Current Selection` | Analyze the selected C# text              |
+| `QueryForge: Analyze Open Documents`    | Analyze every open C# document            |
 | `QueryForge: Open Example`              | Open a built-in fictional C# example      |
 | `QueryForge: Open Settings`             | Open QueryForge extension settings        |
 | `QueryForge: Clear Diagnostics`         | Clear QueryForge diagnostics and metadata |
 | `QueryForge: Show Output`               | Open the QueryForge output channel        |
-| `QueryForge: Support the Project`       | Open GitHub Sponsors                      |
+| `QueryForge: Support the Project`       | Open GitHub Sponsors (optional)           |
 
 ## Current capabilities
 
@@ -118,15 +129,34 @@ Not every diagnostic includes a Quick Fix. Review-required suggestions stay in h
 | ------------------------ | ------------------------- |
 | Analyze current C# file  | Yes                       |
 | Analyze selected code    | Yes                       |
+| Analyze open C# docs     | Yes                       |
 | Editor diagnostics       | Yes                       |
 | Problems Panel           | Yes                       |
 | Detailed hover guidance  | Yes                       |
 | Safe Quick Fixes         | When provided by the Core |
 | Analyze on save          | Optional                  |
-| Workspace analysis       | Not yet                   |
+| Full workspace crawl     | Not yet                   |
 | Roslyn semantic analysis | No                        |
 | Database connection      | No                        |
 | SQL execution            | No                        |
+
+## QueryForge ecosystem
+
+| Piece | Role | Package / ID |
+| ----- | ---- | ------------ |
+| **QueryForge MCP / Core** | Analysis engine + MCP server + TypeScript API | `@luispenholato/queryforge-mcp` |
+| **QueryForge Editor** | VS Code / Cursor / Antigravity extension | `queryforge-tools.queryforge-editor` |
+
+The Editor embeds the Core library locally. It does not start the MCP server.
+
+### Version compatibility
+
+| Editor | Core dependency |
+| ------ | --------------- |
+| `0.1.2` | `@luispenholato/queryforge-mcp@^0.7.1` |
+| `0.1.1` | `@luispenholato/queryforge-mcp@^0.7.0` |
+
+Keep the Editor and Core on matching minor lines when building from source.
 
 ## Supported patterns
 
@@ -201,12 +231,32 @@ QueryForge analyzes source text locally. The analysis does not upload source cod
 
 The extension does not use telemetry, analytics, AI services or login.
 
+## When not to trust a finding
+
+QueryForge is conservative text analysis. Treat findings as review prompts:
+
+| Situation | Guidance |
+| --------- | -------- |
+| `MISSING_AS_NO_TRACKING` on write/update paths | Skip if the entity will be mutated or tracked intentionally |
+| `FULL_ENTITY_MATERIALIZATION` / broad `ToList` | May be intentional for small in-memory sets or caching |
+| `LARGE_TAKE` on exports/admin reports | Often expected; confirm pagination product requirements |
+| `N_PLUS_ONE_QUERY_IN_LOOP` heuristics | Confirm the loop really hits the database per iteration |
+| Low confidence hover values | Prefer manual rewrite plan over Quick Fix |
+| Review-required fixes | Never auto-apply; validate SQL and tests first |
+
+Do **not** apply a fix when:
+
+- the document changed after analysis (stale fix — re-run analysis);
+- the suggestion conflicts with domain rules or intentional tracking;
+- you cannot verify the generated SQL or regression tests.
+
 ## Limitations
 
 - Heuristic analysis can produce false positives
 - No Roslyn semantic analysis
 - Does not validate generated SQL or execution plans
 - Safe fixes are intentionally limited
+- Full solution/workspace crawl is not available yet (open documents only)
 - Human review remains necessary
 
 ## Development
@@ -236,11 +286,9 @@ Extension ID:
 
 ## Support the project
 
-QueryForge Editor is free and open source.
+QueryForge Editor is free, open source and fully usable without sponsorship.
 
-If the extension helps your daily work, consider supporting its continued maintenance through [GitHub Sponsors](https://github.com/sponsors/luismpenholato).
-
-Your support helps fund:
+If the extension helps your daily work, optional support through [GitHub Sponsors](https://github.com/sponsors/luismpenholato) funds continued maintenance:
 
 - analyzer and editor improvements;
 - editor compatibility updates;
