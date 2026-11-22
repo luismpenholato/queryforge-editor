@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Clarified Getting Started walkthrough and Open Example onboarding for Core 0.8.0 Dapper smells (`SELECT *`, query-in-loop, string-concat SQL).
+- Expanded false-positive guidance with dedicated rows for `DAPPER_SELECT_STAR`, `DAPPER_QUERY_IN_LOOP` and `DAPPER_STRING_CONCAT_SQL`.
+
 ## [0.1.3] - 2026-11-22
 
 ### Changed

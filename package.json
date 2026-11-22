@@ -106,12 +106,12 @@
       {
         "id": "queryforge.getStarted",
         "title": "Get started with QueryForge",
-        "description": "Analyze risky LINQ and Entity Framework query patterns directly in your editor.",
+        "description": "Analyze risky LINQ, Entity Framework and Dapper query patterns directly in your editor.",
         "steps": [
           {
             "id": "queryforge.openExample",
             "title": "Open a QueryForge example",
-            "description": "Open a fictional C# example containing common LINQ and Entity Framework performance smells.\n[Open Example](command:queryforge.openExample)",
+            "description": "Open a fictional C# example containing common LINQ/EF smells. For Dapper files, set the provider to dapper so Core 0.8.0 rules such as SELECT *, query-in-loop and string-concat SQL can fire.\n[Open Example](command:queryforge.openExample)",
             "media": {
               "image": "images/icon.png",
               "altText": "QueryForge extension icon"
@@ -153,7 +153,7 @@
           {
             "id": "queryforge.openSettings",
             "title": "Configure the analyzer",
-            "description": "Choose the query provider, maximum issue count and minimum diagnostic severity.\n[Open Settings](command:queryforge.openSettings)",
+            "description": "Choose the query provider (use dapper for Dapper-heavy files), maximum issue count and minimum diagnostic severity.\n[Open Settings](command:queryforge.openSettings)",
             "media": {
               "image": "images/icon.png",
               "altText": "QueryForge extension icon"
