@@ -246,8 +246,10 @@ QueryForge is conservative text analysis. Treat findings as review prompts:
 | `FULL_ENTITY_MATERIALIZATION` / broad `ToList` | May be intentional for small in-memory sets or caching |
 | `LARGE_TAKE` on exports/admin reports | Often expected; confirm pagination product requirements |
 | `N_PLUS_ONE_QUERY_IN_LOOP` heuristics | Confirm the loop really hits the database per iteration |
-| `DAPPER_SELECT_STAR` / concat SQL | Confirm whether the dynamic SQL is intentional and reviewed |
-| `AGGREGATION_AFTER_MATERIALIZATION` / `GROUPBY_AFTER_TOLIST` | Confirm whether aggregation must run in-memory |
+| `DAPPER_SELECT_STAR` | Confirm whether loading every column is intentional for the mapped type |
+| `DAPPER_QUERY_IN_LOOP` | Confirm the loop body really issues a Dapper round-trip each iteration |
+| `DAPPER_STRING_CONCAT_SQL` | Confirm whether dynamic SQL is intentional, reviewed and parameterized |
+| `AGGREGATION_AFTER_MATERIALIZATION` / `GROUPBY_AFTER_TOLIST` | Confirm whether aggregation/grouping must run in-memory after a bounded load |
 | Low confidence hover values | Prefer manual rewrite plan over Quick Fix |
 | Review-required fixes | Never auto-apply; validate SQL and tests first |
 
