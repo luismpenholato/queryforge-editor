@@ -1,6 +1,7 @@
 import { PRODUCT_QUERY_SERVICE_EXAMPLE } from '../example/product-query-service.example.js';
 
-export const EXAMPLE_OPENED_MESSAGE = 'QueryForge example opened.';
+export const EXAMPLE_OPENED_MESSAGE =
+  'QueryForge example opened. Analyze this LINQ/EF sample, then set queryforge.analysis.provider to dapper when reviewing SELECT *, query-in-loop, QueryMultiple-in-loop, or string-concat SQL smells from Core 0.8.x.';
 export const ANALYZE_EXAMPLE_ACTION = 'Analyze Example';
 export const DISMISS_EXAMPLE_ACTION = 'Dismiss';
 

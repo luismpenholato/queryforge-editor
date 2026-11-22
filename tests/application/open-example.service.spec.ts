@@ -69,4 +69,11 @@ describe('open-example.service', () => {
       DISMISS_EXAMPLE_ACTION,
     );
   });
+
+  it('mentions Dapper provider guidance for Core 0.8.x smells', () => {
+    expect(EXAMPLE_OPENED_MESSAGE).toMatch(/dapper/i);
+    expect(EXAMPLE_OPENED_MESSAGE).toMatch(/SELECT \*/);
+    expect(EXAMPLE_OPENED_MESSAGE).toMatch(/query-in-loop/);
+    expect(EXAMPLE_OPENED_MESSAGE).toMatch(/string-concat SQL/);
+  });
 });

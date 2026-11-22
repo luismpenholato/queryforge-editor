@@ -54,11 +54,12 @@ antigravity --install-extension queryforge-editor-<version>.vsix
 3. Click **Analyze Example** (or run `QueryForge: Analyze Current File`).
 4. Open **Problems** (`Ctrl+Shift+M`) and hover an underlined finding.
 5. Use the lightbulb on a diagnostic marked as a safe fix.
+6. For Dapper-heavy files, set `queryforge.analysis.provider` to `dapper` so Core codes such as `DAPPER_SELECT_STAR`, `DAPPER_QUERY_IN_LOOP` and `DAPPER_STRING_CONCAT_SQL` receive the intended context.
 
 What you should see:
 
 - underlines in the editor for matched query smells;
-- entries in the Problems Panel with rule codes such as `COUNT_GREATER_THAN_ZERO`;
+- entries in the Problems Panel with rule codes such as `COUNT_GREATER_THAN_ZERO` (and Dapper codes when the provider is `dapper`);
 - hover text with explanation, suggestion, rewrite plan and confidence;
 - a Quick Fix only when `fix.safety === "safe"`.
 

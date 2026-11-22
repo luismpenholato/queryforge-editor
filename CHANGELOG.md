@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- Improved Open Example onboarding message to mention Core 0.8.x Dapper smells and the `dapper` provider setting.
+- Clarified the 30-second try-it flow for Dapper provider context and rule codes.
+
 ## [0.1.4] - 2026-11-22
 
 ### Changed
