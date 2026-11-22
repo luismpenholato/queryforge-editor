@@ -2,7 +2,7 @@
   "name": "queryforge-editor",
   "displayName": "QueryForge — EF & LINQ Analyzer",
   "description": "Detect risky LINQ and Entity Framework query patterns locally with editor diagnostics, detailed guidance and safe quick fixes.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "queryforge-tools",
   "license": "MIT",
   "pricing": "Free",
@@ -111,7 +111,7 @@
           {
             "id": "queryforge.openExample",
             "title": "Open a QueryForge example",
-            "description": "Open a fictional C# example containing common LINQ/EF smells. For Dapper files, set the provider to dapper so Core 0.8.0 rules such as SELECT *, query-in-loop and string-concat SQL can fire.\n[Open Example](command:queryforge.openExample)",
+            "description": "Open a fictional C# example containing common LINQ/EF smells. For Dapper files, set the provider to dapper so Core 0.8.x rules such as SELECT *, query-in-loop and string-concat SQL can fire.\n[Open Example](command:queryforge.openExample)",
             "media": {
               "image": "images/icon.png",
               "altText": "QueryForge extension icon"
@@ -242,15 +242,15 @@
     "publish:ovsx": "npm run build && ovsx publish"
   },
   "dependencies": {
-    "@luispenholato/queryforge-mcp": "^0.8.0"
+    "@luispenholato/queryforge-mcp": "^0.8.1"
   },
   "devDependencies": {
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.20.5",
     "@types/vscode": "^1.96.0",
     "@vscode/vsce": "^3.9.2",
     "adm-zip": "^0.5.18",
     "esbuild": "^0.25.5",
-    "ovsx": "^1.0.1",
+    "ovsx": "^1.4.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
