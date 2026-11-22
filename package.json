@@ -2,7 +2,7 @@
   "name": "queryforge-editor",
   "displayName": "QueryForge — EF & LINQ Analyzer",
   "description": "Detect risky LINQ and Entity Framework query patterns locally with editor diagnostics, detailed guidance and safe quick fixes.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "queryforge-tools",
   "license": "MIT",
   "pricing": "Free",
@@ -242,7 +242,7 @@
     "publish:ovsx": "npm run build && ovsx publish"
   },
   "dependencies": {
-    "@luispenholato/queryforge-mcp": "^0.7.1"
+    "@luispenholato/queryforge-mcp": "^0.8.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
