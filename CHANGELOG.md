@@ -62,5 +62,6 @@ All notable changes to this project will be documented in this file.
 - Fixed cross-platform VSIX validation by reading the package as a ZIP archive.
 - Validated the packaged extension manifest instead of only the local package metadata.
 
+[0.1.2]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.2
 [0.1.1]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.1
 [0.1.0]: https://github.com/luismpenholato/queryforge-editor/releases/tag/v0.1.0
