@@ -153,6 +153,7 @@ The Editor embeds the Core library locally. It does not start the MCP server.
 
 | Editor | Core dependency |
 | ------ | --------------- |
+| `0.1.4` | `@luispenholato/queryforge-mcp@^0.8.1` |
 | `0.1.3` | `@luispenholato/queryforge-mcp@^0.8.0` |
 | `0.1.2` | `@luispenholato/queryforge-mcp@^0.7.1` |
 | `0.1.1` | `@luispenholato/queryforge-mcp@^0.7.0` |
@@ -172,8 +173,8 @@ QueryForge focuses on common query-performance smells, including:
 - structural N+1 and round-trip patterns
 - unnecessary includes
 - client-side query behavior
-- Dapper safety smells (`SELECT *`, query-in-loop, string-concat SQL) from Core 0.8.0
-- aggregation after materialization (`Count`/`Sum`/`Average`/`GroupBy` after `ToList`) from Core 0.8.0
+- Dapper safety smells (`SELECT *`, query-in-loop, string-concat SQL) from Core 0.8.x
+- aggregation after materialization (`Count`/`Sum`/`Average`/`GroupBy` after `ToList`) from Core 0.8.x
 
 Set `queryforge.analysis.provider` to `dapper` when reviewing Dapper-heavy files so those Core rules receive the intended provider context. No extra Editor UI is required — findings appear as normal diagnostics after Analyze Current File, Selection, or Open Documents.
 
